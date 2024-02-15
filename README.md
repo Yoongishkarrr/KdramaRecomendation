@@ -6,7 +6,7 @@ Welcome Message: Greets new users and asks for their name to personalize the int
 Genre Selection: Users can choose from a list of genres to get recommendations that suit their taste.
 Personalized Recommendations: Based on the selected genre, the bot provides a list of Kdramas complete with a brief description and a link to where users can watch them.
 ## Future Updates
-Expanded Drama Lists: We plan to continually update and expand our list of dramas to include more genres and titles, ensuring users have access to the latest and most popular Kdramas.
+Expanded Drama Lists: I plan to continually update and expand our list of dramas to include more genres and titles, ensuring users have access to the latest and most popular Kdramas.
 Additional Features: I am also working on adding new features to enhance user experience and interaction with the bot
 ## How It Works
 User Interaction: The bot starts by asking the user's name and then prompts them to select their preferred genre.

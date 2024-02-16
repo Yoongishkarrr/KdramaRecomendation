@@ -12,7 +12,7 @@ var (
         "choice":  "What do you prefer: Kdramas or Anime?\nPlease type 'Kdrama' or 'Anime'.",
         "genre":   "Which genre do you prefer?\n (Romance, Melodrama, Historical, Thriller, Action, Comedy)",
     }
-    recomendations = map[string][]string{
+    recomendations = map[string]map[string]string
         "Kdrama": {
             "Romance": {"Twinkling Watermelon✨🍉\nA high school student with a passion for music and playing guitar in a rock band walks into a mysterious musical instrument store and is transported from 2023 to 1995.\n https://doramy.club/40627-mercayushhij-arbuz.html"},
             "Melodrama": {"Heirs😏💸\n The series tells the story of young heirs of wealthy families who study at an exclusive school for the elite\n https://kinogo.inc/drama/13744-nasledniki-dorama-hd-dolby2-v13-vs12.html"},
@@ -81,7 +81,6 @@ func main() {
                 userState.Name = text
                 userState.Step = "choice"
                 msgText := "Hello, " + update.Message.Text + "! " + messages["choice"]
-                msg := tgbotapi.NewMessage(chatID, msgText)
                 bot.Send(msg)
 
                 case "choice":
@@ -95,17 +94,17 @@ func main() {
                     bot.Send(msg)
                 }
 
-            case "genre":
-                genre := strings.Title(strings.ToLower(text))
-                if recs, ok := recommendations[userState.Preference][genre]; ok {
-                    for _, rec := range recs {
+           case "genre":
+                if recs, ok := recommendations[userState.Preference]; ok {
+                    rec, exists := recs[text]
+                    if exists {
                         msg := tgbotapi.NewMessage(chatID, rec)
                         bot.Send(msg)
+                    } else {
+                        msg := tgbotapi.NewMessage(chatID, "Sorry, I couldn't find recommendations for this genre.")
+                        bot.Send(msg)
                     }
-                    delete(userStates, chatID) // Сброс состояния пользователя после предоставления рекомендаций
-                } else {
-                    msg := tgbotapi.NewMessage(chatID, "Sorry, I couldn't find recommendations for this genre.")
-                    bot.Send(msg)
+                    delete(userStates, chatID)
                 }
             }
         }

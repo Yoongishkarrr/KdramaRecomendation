@@ -1,4 +1,4 @@
-## Kdrama Recommendation Bot
+## Kdrama and Anime Recommendation Bot
 The Kdrama Recommendation Bot is a Telegram bot designed to provide users with Korean drama (Kdrama) recommendations based on their preferred genre. Whether you're into Romance, Melodrama, Historical, Thriller, Action, or Comedy, this bot has got you covered with tailored suggestions.
 
 ## Features

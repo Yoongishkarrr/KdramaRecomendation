@@ -57,9 +57,9 @@ func main() {
     userStates := make(map[int64]*UserState)
 
     for update := range updates {
-        if update.Message != nil { // Ensure we're dealing with a message update
+        if update.Message != nil { 
             chatID := update.Message.Chat.ID
-            text := update.Message.Text // Correctly capturing the text from the user's message
+            text := update.Message.Text 
 
             if _, ok := userStates[chatID]; !ok {
                 userStates[chatID] = &UserState{Step: "welcome"}

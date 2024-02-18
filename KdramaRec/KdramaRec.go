@@ -2,15 +2,17 @@ package main
 
 import (
     "log"
+
     "github.com/go-telegram-bot-api/telegram-bot-api/v5"
-    // "strings"
 )
 
 var (
     messages = map[string]string{
-        "welcome": "Welcome to the Kdrama Recommendation Bot!\nWhat's your name?",
+        "welcome": "Welcome to the Kdrama Recommendation Bot! What's your name?",
         "choice":  "What do you prefer: Kdramas or Anime?\nPlease type 'Kdrama' or 'Anime'.",
         "genre":   "Which genre do you prefer?\n(Romance, Melodrama, Historical, Thriller, Action, Comedy)",
+        "more":    "Do you want to choose another genre?",
+        "thanks":  "Thank you for using the Kdrama Recommendation Bot! Enjoy your viewing!🤍",
     }
     recommendations = map[string]map[string][]string{
         "Kdrama": {
@@ -36,6 +38,7 @@ type UserState struct {
     Name       string
     Preference string
     Step       string
+    More       bool
 }
 
 func main() {
@@ -57,9 +60,9 @@ func main() {
     userStates := make(map[int64]*UserState)
 
     for update := range updates {
-        if update.Message != nil { 
+        if update.Message != nil {
             chatID := update.Message.Chat.ID
-            text := update.Message.Text 
+            text := update.Message.Text
 
             if _, ok := userStates[chatID]; !ok {
                 userStates[chatID] = &UserState{Step: "welcome"}
@@ -95,11 +98,27 @@ func main() {
                         msg := tgbotapi.NewMessage(chatID, rec)
                         bot.Send(msg)
                     }
+                    userState.Step = "more"
+                    msg := tgbotapi.NewMessage(chatID, messages["more"])
+                    bot.Send(msg)
                 } else {
                     msg := tgbotapi.NewMessage(chatID, "Sorry, I couldn't find recommendations for this genre.")
                     bot.Send(msg)
                 }
-                delete(userStates, chatID) // Reset user state after providing recommendations
+
+            case "more":
+                if text == "yes" {
+                    userState.Step = "genre"
+                    msg := tgbotapi.NewMessage(chatID, messages["genre"])
+                    bot.Send(msg)
+                } else if text == "no" {
+                    msg := tgbotapi.NewMessage(chatID, messages["thanks"])
+                    bot.Send(msg)
+                    delete(userStates, chatID) // Reset user state after thanking
+                } else {
+                    msg := tgbotapi.NewMessage(chatID, "Please type 'yes' or 'no'.")
+                    bot.Send(msg)
+                }
             }
         }
     }

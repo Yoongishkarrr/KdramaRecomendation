@@ -74,7 +74,7 @@ func main() {
             case "welcome":
                 userState.Name = text
                 userState.Step = "choice"
-                msg := tgbotapi.NewMessage(chatID, messages["choice"])
+                msg := tgbotapi.NewMessage(chatID, "Welcome to the Kdrama Recommendation Bot, "+userState.Name+"!\nWhat's your preference: Kdramas or Anime?\nPlease type 'Kdrama' or 'Anime'.")
                 bot.Send(msg)
 
             case "choice":

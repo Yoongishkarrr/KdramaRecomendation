@@ -13,6 +13,7 @@ var (
         "genre":   "Which genre do you prefer?\n(Romance, Melodrama, Historical, Thriller, Action, Comedy)",
         "more":    "Do you want to choose another genre?",
         "thanks":  "Thank you for using the Kdrama Recommendation Bot! Enjoy your viewing!🤍",
+        "comment": "Please leave some comments or suggestuin for future improvement of the bot🫂",
     }
     recommendations = map[string]map[string][]string{
         "Kdrama": {
@@ -39,6 +40,23 @@ type UserState struct {
     Preference string
     Step       string
     More       bool
+}
+
+func ForwardToOtherBot(comment string) {
+    otherBotToken := "6323574657:AAGb4hy2IBJPHrUJ2RTRsjkTVX44n8xUE4A" // Replace with your actual bot token where you want to get comments
+    otherBot, err := tgbotapi.NewBotAPI(otherBotToken)
+    if err != nil {
+        log.Panic(err)
+    }
+    otherBot.Debug = true
+
+const YourOtherBotUserID = 6323574657
+
+    msg := tgbotapi.NewMessage(YourOtherBotUserID, "New comment from a user:\n"+comment)
+    _, err = otherBot.Send(msg)
+    if err != nil {
+        log.Printf("Error forwarding comment: %v", err)
+    }
 }
 
 func main() {
@@ -105,21 +123,25 @@ func main() {
                     msg := tgbotapi.NewMessage(chatID, "Sorry, I couldn't find recommendations for this genre.")
                     bot.Send(msg)
                 }
-
             case "more":
                 if text == "yes" {
                     userState.Step = "genre"
                     msg := tgbotapi.NewMessage(chatID, messages["genre"])
                     bot.Send(msg)
-                } else if text == "no" {
-                    msg := tgbotapi.NewMessage(chatID, messages["thanks"])
-                    bot.Send(msg)
-                    delete(userStates, chatID) // Reset user state after thanking
-                } else {
-                    msg := tgbotapi.NewMessage(chatID, "Please type 'yes' or 'no'.")
-                    bot.Send(msg)
+                    } else if text == "no" {
+                        userState.Step = "comments"
+                        msg := tgbotapi.NewMessage(chatID, messages["comment"])
+                        bot.Send(msg)
+                        } else {
+                            msg := tgbotapi.NewMessage(chatID, "Please type 'yes' or 'no'.")
+                            bot.Send(msg)
+                        }
+                    case "comments":
+                        ForwardToOtherBot(text)
+                        msg := tgbotapi.NewMessage(chatID, "Thank you for your comments! 🙌")
+                        bot.Send(msg)
+                        delete(userStates, chatID)
+                    }
                 }
             }
         }
-    }
-}
